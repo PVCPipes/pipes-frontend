@@ -7,11 +7,23 @@ import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
 
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState('');
   // const inputRef = useRef();
 
-  const submitFiles = (event: any) => {
-    console.log("something");
+  const submitFiles = async (e: any) => {
+    try {
+      const body = { file };
+      const res = await fetch(`${process.env.FE_API}/api/hello`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application.json'},
+        body: JSON.stringify(body)
+      })
+
+      const data = await res.json();
+      console.log(data)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const handleChange = (event: any) => {
@@ -19,9 +31,9 @@ const Home: NextPage = () => {
 
     const blob = new Blob([something], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
 
-    console.log(blob);
+    const img = URL.createObjectURL(blob);
     
-    
+    setFile(img);
   }
 
 
