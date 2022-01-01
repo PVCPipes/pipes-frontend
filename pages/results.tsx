@@ -75,7 +75,7 @@ const Results: NextPage = () => {
 
   return (
     <>
-      <LoadingPage />
+      {/* <LoadingPage /> */}
       <Table colorScheme="teal" size="md">
         <Thead>
           <Tr>
@@ -162,11 +162,19 @@ const LoadingPage = () => {
       zIndex={2}
     >
       <HStack height="100%" p={20} justify="space-between" w="100%">
-        <Image src={selected.imageLink} rounded={"lg"} w="45%" h="100%" />
+        <Image
+          src={selected.imageLink}
+          rounded={"xl"}
+          shadow={"sm"}
+          w="45%"
+          h="100%"
+        />
         <Center w="45%">
           <VStack>
-            <Text fontSize="6xl">Loading</Text>
-            <Box bg="teal" h="10px" w="100px" mt="10" />
+            <HStack>
+              <CircularProgress isIndeterminate color="teal" mr={5} />
+              <Text fontSize="6xl">Loading</Text>
+            </HStack>
           </VStack>
         </Center>
       </HStack>
