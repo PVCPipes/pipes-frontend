@@ -20,8 +20,6 @@ import {
   CircularProgressLabel,
   StackDivider,
   Button,
-  Divider,
-  Code,
   Center,
 } from "@chakra-ui/react";
 import { CheckCircleIcon, SearchIcon, CloseIcon } from "@chakra-ui/icons";
@@ -65,10 +63,6 @@ const Results: NextPage = () => {
     if (code) {
       const results = await getPayload(code);
       setResults(
-        Object.keys(results as any).map((key: string) => (results as any)[key])
-      );
-
-      console.log(
         Object.keys(results as any).map((key: string) => (results as any)[key])
       );
       setCode(

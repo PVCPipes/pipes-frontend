@@ -11,11 +11,17 @@ import {
   DrawerContent,
   Heading,
   HStack,
+  Tag,
+  TagLeftIcon,
+  TagLabel,
+  Divider,
+  Badge,
 } from "@chakra-ui/react";
 import { AttachmentIcon } from "@chakra-ui/icons";
 import Card from "../components/Card";
 import LoadingPage from "../components/LoadingComponent";
 import Header from "../components/Header";
+import { TimeIcon } from "@chakra-ui/icons";
 
 import xlsx from "xlsx";
 import axios from "axios";
@@ -23,6 +29,7 @@ import withAuth from "../context/ProtectedRoutesWrapper";
 import { useResults } from "../context/ResultsContext";
 import { useRouter } from "next/router";
 import { addPayload } from "../lib/db";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   const [file, setFiles] = useState([]);
@@ -69,8 +76,9 @@ const Home: NextPage = () => {
       payload = payload.sort(
         (a: any, b: any) => a["Person ID"] - b["Person ID"]
       );
+
       const res = await axios({
-        url: "http://localhost:3000/api/v1/process",
+        url: process.env.NEXT_PUBLIC_BE_URL + "/api/v1/process",
         method: "post",
         data: {
           data: JSON.stringify(payload),
@@ -101,6 +109,7 @@ const Home: NextPage = () => {
         <Heading width="100%" padding={8}>
           Waiting for you to start working ....
         </Heading>
+
         <Drawer
           variant="permanent"
           isOpen={!isLoading}
@@ -175,6 +184,38 @@ const Home: NextPage = () => {
                   >
                     Submit File
                   </Button>
+                  <Divider />
+                  <VStack maxH={"300px"} spacing={2}>
+                    <Heading size={"md"} fontWeight="bold">
+                      Upload Your Documents
+                    </Heading>
+                    {JSON.parse(localStorage.getItem("codeList") as any)?.map(
+                      (code: any) => {
+                        return (
+                          <Link href={`/results?code=${code}`} key={code}>
+                            <Tag
+                              size={"lg"}
+                              key={code}
+                              variant="subtle"
+                              colorScheme="cyan"
+                              onClick={() =>
+                                router.push("results", {
+                                  query: {
+                                    code,
+                                  },
+                                })
+                              }
+                            >
+                              <TagLeftIcon boxSize="12px" as={TimeIcon} />
+                              <TagLabel textAlign={"start"}>
+                                {new Date(code).toISOString()}
+                              </TagLabel>
+                            </Tag>
+                          </Link>
+                        );
+                      }
+                    )}
+                  </VStack>
                 </VStack>
               </Card>
             </DrawerBody>

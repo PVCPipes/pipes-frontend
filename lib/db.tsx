@@ -7,6 +7,13 @@ export const addPayload = async (result: any) => {
     "https://pipes-4cc1b-default-rtdb.asia-southeast1.firebasedatabase.app"
   );
   const payloadRef = ref(db, `payload/${id}`);
+  if (localStorage.getItem("codeList")) {
+    const codeList = JSON.parse(localStorage.getItem("codeList") as any);
+    localStorage.setItem("codeList", JSON.stringify([...codeList, id]));
+  } else {
+    localStorage.setItem("codeList", JSON.stringify([id]));
+  }
+
   await set(payloadRef, result);
   return id;
 };
