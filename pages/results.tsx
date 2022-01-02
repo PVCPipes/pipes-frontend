@@ -65,13 +65,12 @@ const Results: NextPage = () => {
     <>
       <Box padding={"20px"}>
         <HStack justify="space-between">
-          <Heading m={"10px"}>This is the title</Heading>
+          <Heading m={"10px"}>Pipes</Heading>
           <Button leftIcon={<SearchIcon />} width={"30%"} textAlign={"start"}>
             <Text textAlign={"start"} width="100%">
               Search
             </Text>
           </Button>
-          <Button colorScheme={"teal"}>Export as Excel</Button>
         </HStack>
         <Divider />
         <Card>
@@ -156,13 +155,27 @@ const TableLoading = ({ columnsToLoad = 1, rowsToLoad = 1 }: any) => {
 };
 
 const ResultsDetails = ({ selectedData }: { selectedData: any }) => {
-  console.log(selectedData);
   const failed = selectedData.coreRulesResults.fails as any;
   const additionalRules = selectedData?.additionalRulesResults as any;
-  const { creditsTakenByStudents, requiredCreditPoints } = selectedData;
+  const { creditsTakenByStudents, requiredCreditPoints, takenUnits } =
+    selectedData;
   const creditPercentage = Math.floor(
     (creditsTakenByStudents * 100) / requiredCreditPoints
   );
+
+  const groupCode = () => {
+    const obj = {};
+    takenUnits.forEach((code: string) => {
+      const match = code.match(/\d+/);
+      const first = parseInt((match?.toString() as any)[0], 10);
+      if (!(obj as any)[first]) (obj as any)[first] = [];
+      (obj as any)[first].push(code);
+    });
+    return Object.keys(obj).map((key) => ({
+      units: (obj as any)[key],
+      tag: key,
+    }));
+  };
 
   return (
     <VStack h="100%" align={"stretch"} spacing="20px">
@@ -262,6 +275,28 @@ const ResultsDetails = ({ selectedData }: { selectedData: any }) => {
             }
           )}
         </VStack>
+      </Card>
+      <Card title={"Units taken by students"}>
+        <Wrap spacing={3}>
+          {groupCode().map(({ tag, units }: any, index: number) => {
+            return (
+              <Badge key={tag} padding={3}>
+                <Text>{`Level ${tag} units`}</Text>
+                <Wrap>
+                  {units.map((code: string, index: number) => {
+                    return (
+                      <CodeBadge
+                        tag={tag}
+                        code={code}
+                        key={`${index}${code}`}
+                      />
+                    );
+                  })}
+                </Wrap>
+              </Badge>
+            );
+          })}
+        </Wrap>
       </Card>
     </VStack>
   );

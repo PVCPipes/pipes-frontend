@@ -8,6 +8,7 @@ export const useResults = createContext({
 
 const ResultsProvider = ({ children }: { children: ReactElement }) => {
   const [results, setResults] = useState([]);
+
   return (
     <useResults.Provider value={{ resultLists: results, setResults }}>
       <Box>{children}</Box>

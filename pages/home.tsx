@@ -69,13 +69,14 @@ const Home: NextPage = () => {
         (a: any, b: any) => a["Person ID"] - b["Person ID"]
       );
       const res = await axios({
-        url: "http://localhost:3000/api/v1/process",
+        url: "http://localhost:54253/api/v1/process",
         method: "post",
         data: {
           data: JSON.stringify(payload),
         },
       });
       setResults(res.data);
+      console.log(res.data);
       setIsLoading(false);
     }
     router.push("/results");
