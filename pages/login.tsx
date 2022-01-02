@@ -7,6 +7,7 @@ import {
   Center,
   ChakraProvider,
 } from "@chakra-ui/react";
+import Card from "../components/Card";
 
 export type LoginInfo = {
   email: string;
@@ -27,9 +28,7 @@ const Login: NextPage = (props) => {
           p={"0.5rem"}
           position={"relative"}
         >
-          <Text fontSize="lg" fontWeight="bold">
-            This is Login Page
-          </Text>
+          <Card></Card>
         </Box>
       </ChakraProvider>
     </div>

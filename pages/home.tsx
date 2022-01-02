@@ -15,10 +15,12 @@ import {
 import { AttachmentIcon } from "@chakra-ui/icons";
 import Card from "../components/Card";
 import { useRouter } from "next/router";
+import LoadingPage from "../components/LoadingComponent";
 import xlsx from "xlsx";
 
 const Home: NextPage = () => {
   const [file, setFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   function readFileAsync(file: any) {
@@ -44,6 +46,7 @@ const Home: NextPage = () => {
   };
 
   const onFileSubmit = async () => {
+    setIsLoading(true);
     if (file) {
       let payload: any[] = [];
       for (let i = 0; i < file.length; i++) {
@@ -53,26 +56,35 @@ const Home: NextPage = () => {
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const json = xlsx.utils.sheet_to_json(worksheet);
+        console.log(json);
         payload = payload.concat(json);
       }
     }
+    setIsLoading(false);
+    router.push("/results");
   };
 
   return (
     <Box
-      p={2}
-      width={"100vw"}
-      height={"100vh"}
-      backgroundSize={"120% 100%"}
-      backgroundRepeat={"no-repeat"}
       bgImage={
         "https://assets.website-files.com/5d5e2ff58f10c53dcffd8683/5d9d126de6b3b43d496aea9d_laying.svg"
       }
+      backgroundRepeat={"no-repeat"}
+      backgroundSize={"120% 100%"}
+      height={"100vh"}
+      width={"100vw"}
+      p={2}
     >
+      {isLoading && <LoadingPage />}
       <Heading width="100%" padding={8}>
         Waiting for you to start working ....
       </Heading>
-      <Drawer isOpen={true} onClose={() => {}} placement="left" size={"sm"}>
+      <Drawer
+        isOpen={!isLoading}
+        onClose={() => {}}
+        placement="left"
+        size={"sm"}
+      >
         <DrawerContent bg={"transparent"} shadow={"none"}>
           <DrawerBody alignItems={"center"} display={"flex"}>
             <Card>
