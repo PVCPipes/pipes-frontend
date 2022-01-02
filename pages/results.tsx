@@ -25,6 +25,7 @@ import {
 import DetailsDrawer from "../components/DetailsDrawer";
 import { CheckCircleIcon, SearchIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
+import Card from "../components/Card";
 
 const Results: NextPage = () => {
   const tryCode = [
@@ -235,6 +236,7 @@ const ResultsDetails = ({ selectedData }: { selectedData: any }) => {
           <Wrap spacing={3}>
             {failed?.map(({ code, tag }) => (
               <Badge
+                key={code}
                 colorScheme={colors[tag - 1]}
                 rounded={"md"}
                 fontSize="md"
@@ -281,6 +283,7 @@ const ResultsDetails = ({ selectedData }: { selectedData: any }) => {
               );
               return (
                 <StatsComponent
+                  key={name}
                   description={`The student acheived ${achievedValue} over ${targetValue} ${category}`}
                   percentage={percentage}
                   header={name}
@@ -292,25 +295,6 @@ const ResultsDetails = ({ selectedData }: { selectedData: any }) => {
         </VStack>
       </Card>
     </VStack>
-  );
-};
-
-const Card = ({ children, title }: any) => {
-  return (
-    <Box>
-      <Heading size="sm" my={"10px"}>
-        {title}
-      </Heading>
-      <Center
-        shadow={"sm"}
-        padding={5}
-        border={"1px"}
-        borderColor={"gray.100"}
-        rounded={"md"}
-      >
-        {children}
-      </Center>
-    </Box>
   );
 };
 

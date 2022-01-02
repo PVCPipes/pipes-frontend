@@ -9,11 +9,11 @@ const NavBar: NextPage = (props) => {
   const toggle = () => setIsOpen(!isOpen);
 
   return (
-    // <NavBarContainer {...props}>
-    //   <MenuToggle toggle={toggle} isOpen={isOpen} />
-    //   <MenuLinks isOpen={isOpen} />
-    // </NavBarContainer>
-    <h1>NavBar</h1>
+    <NavBarContainer {...props}>
+      <MenuToggle toggle={toggle} isOpen={isOpen} />
+      <MenuLinks isOpen={isOpen} />
+    </NavBarContainer>
+    // <h1>NavBar</h1>
   );
 };
 
