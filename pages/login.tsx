@@ -9,6 +9,9 @@ import {
 } from "@chakra-ui/react";
 
 import { useAuth } from "../context/AuthContext";
+import withAuth from "../context/ProtectedRoutesWrapper";
+import { useEffect } from "react";
+import Router, { useRouter } from "next/router";
 
 export type LoginInfo = {
   email: string;
@@ -17,6 +20,13 @@ export type LoginInfo = {
 
 const Login: NextPage = (props) => {
   const { login } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("pipesAccessToken");
+    if (accessToken) router.push("/home");
+  }, []);
+
   return (
     <HStack w="100vw" h="100vh" align="center" justify="space-between">
       <Image

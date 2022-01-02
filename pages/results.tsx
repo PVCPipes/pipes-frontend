@@ -26,6 +26,7 @@ import DetailsDrawer from "../components/DetailsDrawer";
 import { CheckCircleIcon, SearchIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
 import Card from "../components/Card";
+import withAuth from "../context/ProtectedRoutesWrapper";
 
 const Results: NextPage = () => {
   const tryCode = [
@@ -337,4 +338,4 @@ const StatsComponent = ({
   );
 };
 
-export default Results;
+export default withAuth(Results);

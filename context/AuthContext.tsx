@@ -71,6 +71,7 @@ export function AuthProvider({ children }: Props) {
             status: "success",
             isClosable: true,
           });
+          localStorage.setItem("pipesAccessToken", JSON.stringify(token));
           router.push("/home");
         } else {
           setEmailInvalid(true);
@@ -96,12 +97,14 @@ export function AuthProvider({ children }: Props) {
   const logout = () => {
     setUser(false);
     auth.signOut();
+    localStorage.removeItem("pipesAccessToken");
     toast({
       title: "Logout Successful",
       description: "You can not play with the pipes now",
       status: "success",
       isClosable: true,
     });
+
     router.push("/login");
   };
 

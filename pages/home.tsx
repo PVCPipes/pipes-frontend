@@ -22,24 +22,11 @@ import xlsx from "xlsx";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "@chakra-ui/react";
+import withAuth from "../context/ProtectedRoutesWrapper";
 
 const Home: NextPage = () => {
   const [file, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { user, login, logout } = useAuth();
-  const router = useRouter();
-  const toast = useToast();
-
-  const userLogout = () => {
-    toast({
-      title: "Logout Successful",
-      description: "You can not play with the pipes now",
-      status: "success",
-      isClosable: true,
-    });
-    logout();
-    router.push("/login");
-  };
 
   function readFileAsync(file: any) {
     return new Promise((resolve, reject) => {
@@ -197,4 +184,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default withAuth(Home);

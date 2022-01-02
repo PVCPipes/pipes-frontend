@@ -1,34 +1,65 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Pipes - Your go to website for Course Progression Evaluation
 
-## Getting Started
+This website allows monash users to upload their csv files that are downloaded from Callista to out platform. In which results can be obtained once the processing is done.
 
-First, run the development server:
+## User Workflow
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+1. Staff logs into the platform
+2. Staff uploads the csv file generated from Callista
+3. Results are generated on another page, in which a link is provided for every generation of result
+4. Staff can revisit the results using the link provided
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<br>
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Technical Workflow
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+1. TBC
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+<br>
 
-## Learn More
+## Features Offered
 
-To learn more about Next.js, take a look at the following resources:
+1. Simplicity - Simple "Upload & Go" platform allowing users to just upload everything in one setting.
+2. Advanced Analytics - users are able to view various kinds of analytics from the results provided (e.g. missed core units, percentage amount of credit points achieved, etc.)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<br>
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Enabling Technologies
 
-## Deploy on Vercel
+### Front End
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Next.js - Main
+2. Firebase - Auth
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Back End
+
+1. Nest.js -
+2. AWS - Server Hosting + DB Hosting
+
+<br>
+
+## Limitations
+
+1. Lack of access to Callista's database - would enable us to directly call the query endpoints instead of processing csv files
+
+2. lack of info consistency on Monash Handbook - making it difficult to retrieve necessary data from Monash Handbook
+
+<br>
+
+## Future prospects
+
+1. Integration with Callista - complementing the course progression framework
+
+2. All backend to be put in Back End - easier management
+
+<br>
+
+## Team Members
+
+Min Hao - Project Manager
+Blaise Tiong - Tech Lead
+Wei Chun - Tech
+
+Lead
+Sauce Foong - Tech Lead
+Ally Teh - UI Lead
