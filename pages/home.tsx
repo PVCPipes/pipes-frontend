@@ -15,7 +15,6 @@ import {
   TagLeftIcon,
   TagLabel,
   Divider,
-  Badge,
 } from "@chakra-ui/react";
 import { AttachmentIcon } from "@chakra-ui/icons";
 import Card from "../components/Card";
@@ -78,7 +77,7 @@ const Home: NextPage = () => {
       );
 
       const res = await axios({
-        url: process.env.NEXT_PUBLIC_BE_URL + "/api/v1/process",
+        url: process.env.NEXT_PUBLIC_BE_URL + "api/v1/process",
         method: "post",
         data: {
           data: JSON.stringify(payload),
@@ -194,6 +193,7 @@ const Home: NextPage = () => {
                         return (
                           <Link href={`/results?code=${code}`} key={code}>
                             <Tag
+                              cursor="pointer"
                               size={"lg"}
                               key={code}
                               variant="subtle"
