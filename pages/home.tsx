@@ -15,12 +15,23 @@ import {
 import { AttachmentIcon } from "@chakra-ui/icons";
 import Card from "../components/Card";
 import { useRouter } from "next/router";
+import xlsx from "xlsx";
 
 const Home: NextPage = () => {
   const [file, setFiles] = useState([]);
   const router = useRouter();
 
-  const onFileSubmit = () => router.push("/results");
+  function readFileAsync(file: any) {
+    return new Promise((resolve, reject) => {
+      let reader = new FileReader();
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
   const onFileClick = () => document.getElementById("fileInput")?.click();
   const onFileChange = (e: any) => {
     if (e.target.files) {
@@ -29,6 +40,21 @@ const Home: NextPage = () => {
           (key) => (e.target.files as any)[key]
         ) as any
       );
+    }
+  };
+
+  const onFileSubmit = async () => {
+    if (file) {
+      let payload: any[] = [];
+      for (let i = 0; i < file.length; i++) {
+        const f = file[i];
+        const data = await readFileAsync(f);
+        const workbook = xlsx.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const json = xlsx.utils.sheet_to_json(worksheet);
+        payload = payload.concat(json);
+      }
     }
   };
 
@@ -59,7 +85,7 @@ const Home: NextPage = () => {
                 <Heading size={"md"} fontWeight="bold">
                   Upload Your Documents
                 </Heading>
-                <Text color="gray.500">in xlsx</Text>
+                <Text color="gray.500">in .xlsx</Text>
                 <Button onClick={onFileClick} width={"100%"}>
                   Pick Files
                 </Button>
@@ -67,6 +93,7 @@ const Home: NextPage = () => {
                   onChange={onFileChange}
                   id="fileInput"
                   type={"file"}
+                  accept=".xlsx"
                   multiple
                   hidden
                 />
