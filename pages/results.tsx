@@ -22,8 +22,9 @@ import {
   Button,
   Divider,
   Code,
+  Center,
 } from "@chakra-ui/react";
-import { CheckCircleIcon, SearchIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon, SearchIcon, CloseIcon } from "@chakra-ui/icons";
 import { useContext, useEffect, useState } from "react";
 
 import { useResults } from "../context/ResultsContext";
@@ -216,21 +217,46 @@ const ResultsDetails = ({ selectedData }: { selectedData: any }) => {
           </Text>
         </HStack>
       </Card>
-
       <Card title={"Additional Requirements"}>
         <VStack divider={<StackDivider borderColor="gray.200" />} spacing={4}>
           {additionalRules?.map(
-            ({ name, category, achievedValue, targetValue }: any) => {
+            ({
+              name,
+              category,
+              achievedValue,
+              targetValue,
+              evalOperator,
+              passedRule,
+            }: any) => {
               const percentage = Math.round(
                 (achievedValue * 100) / targetValue
               );
+              const description = () => {
+                switch (evalOperator) {
+                  case "sum":
+                    return `The student acheived ${achievedValue} over ${targetValue} ${category}`;
+                  case "lte":
+                    return `The student ${
+                      passedRule ? "has" : "did not"
+                    } acheived less than ${targetValue} ${category}, currently at ${achievedValue} ${category}`;
+                  case "mte":
+                    return `The student ${
+                      passedRule ? "has" : "did not"
+                    } acheived more than ${targetValue} ${category}, currently at ${achievedValue} ${category}`;
+                  default:
+                    return "";
+                }
+              };
+
               return (
                 <StatsComponent
-                  key={name}
-                  description={`The student acheived ${achievedValue} over ${targetValue} ${category}`}
+                  description={description()}
+                  evalOperator={evalOperator}
+                  passedRule={passedRule}
                   percentage={percentage}
-                  header={name}
                   category={category}
+                  header={name}
+                  key={name}
                 />
               );
             }
@@ -257,29 +283,62 @@ const CodeBadge = ({ code, tag }: any) => {
 };
 
 const StatsComponent = ({
+  evalOperator,
   percentage,
+  passedRule,
   description,
   category,
   header,
 }: {
+  passedRule: boolean;
+  evalOperator: string;
   percentage: number;
   description: string;
   category?: string;
   header: string;
 }) => {
+  const statsComponentResolver = () => {
+    switch (evalOperator) {
+      case "lte":
+        return (
+          <Center w="40%" height={"100%"}>
+            {passedRule ? (
+              <CheckCircleIcon width={10} height={10} color={"green.500"} />
+            ) : (
+              <CloseIcon width={8} height={8} color={"red.500"} />
+            )}
+          </Center>
+        );
+      case "mte":
+        return (
+          <Center w="40%" height={"100%"}>
+            {passedRule ? (
+              <CheckCircleIcon width={10} height={10} color={"green.500"} />
+            ) : (
+              <CloseIcon width={8} height={8} color={"red.500"} />
+            )}
+          </Center>
+        );
+      case "eq":
+        return (
+          <CircularProgress
+            w="40%"
+            trackColor="transparent"
+            value={percentage}
+            color="teal.400"
+            thickness="7px"
+            size="135px"
+            capIsRound
+          >
+            <CircularProgressLabel>{`${percentage}%`}</CircularProgressLabel>
+          </CircularProgress>
+        );
+    }
+  };
+
   return (
     <HStack justify="space-between">
-      <CircularProgress
-        w="40%"
-        trackColor="transparent"
-        value={percentage}
-        color="teal.400"
-        thickness="7px"
-        size="135px"
-        capIsRound
-      >
-        <CircularProgressLabel>{`${percentage}%`}</CircularProgressLabel>
-      </CircularProgress>
+      {statsComponentResolver()}
       <VStack align={"start"} w="55%">
         {category && (
           <Badge colorScheme="blue" fontSize={"xs"} rounded={"md"}>

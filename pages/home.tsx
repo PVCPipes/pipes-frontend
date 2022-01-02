@@ -78,7 +78,6 @@ const Home: NextPage = () => {
       setResults(res.data);
       setIsLoading(false);
     }
-
     router.push("/results");
   };
 
