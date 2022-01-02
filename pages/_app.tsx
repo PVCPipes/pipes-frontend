@@ -4,6 +4,7 @@ import { extendTheme } from "@chakra-ui/react";
 import "@fontsource/nunito/600.css";
 import "../lib/firebase.config";
 import { AuthProvider } from "../context/AuthContext";
+import ResultsProvider from "../context/ResultsContext";
 
 const theme = extendTheme({
   fonts: {
@@ -29,9 +30,11 @@ const theme = extendTheme({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <AuthProvider>
-        <Component {...pageProps} />
-      </AuthProvider>
+      <ResultsProvider>
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
+      </ResultsProvider>
     </ChakraProvider>
   );
 }

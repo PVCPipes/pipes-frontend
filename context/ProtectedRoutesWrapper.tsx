@@ -8,8 +8,11 @@ const withAuth = (WrappedComponent: any) => {
       if (!accessToken) {
         Router.replace("/login");
         return null;
-      } else if (Router.pathname.includes("login") && accessToken) {
+      } else if (Router.pathname === "/login" && accessToken) {
         Router.replace("/home");
+        return null;
+      } else if (Router.pathname === "/") {
+        Router.replace("/login");
         return null;
       }
       return <WrappedComponent {...props} />;

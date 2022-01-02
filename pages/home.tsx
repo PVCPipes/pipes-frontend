@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   Box,
   Input,
@@ -14,19 +14,20 @@ import {
 } from "@chakra-ui/react";
 import { AttachmentIcon } from "@chakra-ui/icons";
 import Card from "../components/Card";
-import { useRouter } from "next/router";
 import LoadingPage from "../components/LoadingComponent";
 import Header from "../components/Header";
 
 import xlsx from "xlsx";
 import axios from "axios";
-import { useAuth } from "../context/AuthContext";
-import { useToast } from "@chakra-ui/react";
 import withAuth from "../context/ProtectedRoutesWrapper";
+import { useResults } from "../context/ResultsContext";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
   const [file, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { setResults } = useContext(useResults);
 
   function readFileAsync(file: any) {
     return new Promise((resolve, reject) => {
@@ -74,13 +75,11 @@ const Home: NextPage = () => {
           data: JSON.stringify(payload),
         },
       });
-
-      console.log(res.data);
-
+      setResults(res.data);
       setIsLoading(false);
     }
 
-    //router.push("/results");
+    router.push("/results");
   };
 
   return (

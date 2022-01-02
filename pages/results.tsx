@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+const colors = ["cyan", "red", "pink", "blue", "teal", "green"];
 import {
   Text,
   Tr,
@@ -18,49 +19,41 @@ import {
   CircularProgress,
   CircularProgressLabel,
   StackDivider,
-  Center,
   Button,
   Divider,
+  Code,
 } from "@chakra-ui/react";
-import DetailsDrawer from "../components/DetailsDrawer";
 import { CheckCircleIcon, SearchIcon } from "@chakra-ui/icons";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+
+import { useResults } from "../context/ResultsContext";
+import { useRouter } from "next/router";
+
 import Card from "../components/Card";
 import withAuth from "../context/ProtectedRoutesWrapper";
+import DetailsDrawer from "../components/DetailsDrawer";
 
 const Results: NextPage = () => {
-  const tryCode = [
-    {
-      studentName: "Blaise",
-      studentID: "32142531",
-      courseCode: "C2001",
-      canGraduate: false,
-      creditPointsAccumulated: 20,
-    },
-    {
-      studentName: "Abu",
-      studentID: "213213",
-      courseCode: "C2001",
-      canGraduate: false,
-      creditPointsAccumulated: 20,
-    },
-    {
-      studentName: "Ahmad",
-      studentID: "123123234132",
-      courseCode: "C2002",
-      canGraduate: true,
-      creditPointsAccumulated: 20,
-    },
-  ];
+  const { resultLists } = useContext(useResults);
   const { onToggle, isOpen } = useDisclosure();
+  const router = useRouter();
   const [selectedDataIndex, setSelectedDataIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const tryCode = resultLists.map((obj: any) => ({
+    creditPointsAccumulated: `${obj.creditsTakenByStudents} / ${obj.requiredCreditPoints}`,
+    canGraduate: obj?.canGraduate,
+    studentID: obj?.studentID,
+    courseCode: obj?.course,
+    studentName: obj?.name,
+    ...obj,
+  }));
 
   useEffect(() => {
+    if (resultLists.length === 0) router.push("/home");
     setTimeout(() => {
       setLoading(false);
-    }, 3000);
-  }, []);
+    }, 1000);
+  }, [resultLists]);
 
   const onRowClick = (index: number) => {
     setSelectedDataIndex(index);
@@ -152,7 +145,7 @@ const TableLoading = ({ columnsToLoad = 1, rowsToLoad = 1 }: any) => {
         <Tr key={index}>
           {columns.map((_, index) => (
             <Td key={index}>
-              <Skeleton h="20px" />
+              <Skeleton h="25px" rounded="lg" />
             </Td>
           ))}
         </Tr>
@@ -162,91 +155,39 @@ const TableLoading = ({ columnsToLoad = 1, rowsToLoad = 1 }: any) => {
 };
 
 const ResultsDetails = ({ selectedData }: { selectedData: any }) => {
-  const failed = [
-    {
-      code: "FIT1008",
-      creditPoints: 6,
-      tag: 1,
-    },
-    {
-      code: "MAT1830",
-      creditPoints: 6,
-      tag: 1,
-    },
-    {
-      code: "MAT1841",
-      creditPoints: 6,
-      tag: 1,
-    },
-    {
-      code: "FIT1047",
-      creditPoints: 6,
-      tag: 1,
-    },
-    {
-      code: "FIT2004",
-      creditPoints: 6,
-      tag: 2,
-    },
-
-    {
-      code: "MPU3113",
-      creditPoints: 0,
-      tag: 3,
-    },
-    {
-      code: "MPU3123",
-      creditPoints: 0,
-      tag: 3,
-    },
-    {
-      code: "MPU3212",
-      creditPoints: 0,
-      tag: 3,
-    },
-  ];
-
-  const aditionalRules = [
-    {
-      name: "Level 3 Credit Points Summation",
-      category: "creditPoints",
-      tag: 3,
-      targetValue: 36,
-      evalOperator: "eq",
-      operation: "sum",
-      achievedValue: 6,
-      passedRule: false,
-    },
-    {
-      name: "Level 1 Credit Points Summation",
-      category: "creditPoints",
-      tag: 1,
-      targetValue: 60,
-      evalOperator: "lte",
-      operation: "sum",
-      achievedValue: 6,
-      passedRule: true,
-    },
-  ];
-  const colors = ["cyan", "red", "pink", "blue", "teal", "green"];
+  console.log(selectedData);
+  const failed = selectedData.coreRulesResults.fails as any;
+  const additionalRules = selectedData?.additionalRulesResults as any;
+  const { creditsTakenByStudents, requiredCreditPoints } = selectedData;
+  const creditPercentage = Math.floor(
+    (creditsTakenByStudents * 100) / requiredCreditPoints
+  );
 
   return (
     <VStack h="100%" align={"stretch"} spacing="20px">
       <Card title={"Missing units"}>
         {failed.length ? (
           <Wrap spacing={3}>
-            {failed?.map(({ code, tag }) => (
-              <Badge
-                key={code}
-                colorScheme={colors[tag - 1]}
-                rounded={"md"}
-                fontSize="md"
-                py="1"
-                px="2"
-              >
-                {code}
-              </Badge>
-            ))}
+            {failed.map(({ code, tag, operation, fails }: any) =>
+              operation ? (
+                <Badge
+                  key={JSON.stringify({ code, tag, operation, fails })}
+                  colorScheme={colors[tag - 1]}
+                  rounded={"md"}
+                  fontSize="md"
+                  p="4"
+                >
+                  {"Need at least one"}
+                  <Wrap spacing={1}>
+                    {fails.map(({ code, tag }: any) => (
+                      <CodeBadge code={code} tag={tag} />
+                    ))}
+                  </Wrap>
+                </Badge>
+              ) : (
+                <CodeBadge code={code} tag={tag} />
+              )
+            )}
           </Wrap>
         ) : (
           <HStack>
@@ -262,23 +203,24 @@ const ResultsDetails = ({ selectedData }: { selectedData: any }) => {
           <CircularProgress
             w="40%"
             trackColor="transparent"
-            value={40}
+            value={creditPercentage}
             color="teal.400"
             thickness="7px"
-            size="125px"
+            size="135px"
             capIsRound
           >
-            <CircularProgressLabel>{`${40}%`}</CircularProgressLabel>
+            <CircularProgressLabel>{`${creditPercentage}%`}</CircularProgressLabel>
           </CircularProgress>
           <Text p={2} w="55%">
-            Student had achieved 40% of the total credit points of 144
+            {`Student had achieved ${creditPercentage}% of the total credit points of ${requiredCreditPoints}`}
           </Text>
         </HStack>
       </Card>
+
       <Card title={"Additional Requirements"}>
         <VStack divider={<StackDivider borderColor="gray.200" />} spacing={4}>
-          {aditionalRules.map(
-            ({ name, category, achievedValue, targetValue }) => {
+          {additionalRules?.map(
+            ({ name, category, achievedValue, targetValue }: any) => {
               const percentage = Math.round(
                 (achievedValue * 100) / targetValue
               );
@@ -296,6 +238,21 @@ const ResultsDetails = ({ selectedData }: { selectedData: any }) => {
         </VStack>
       </Card>
     </VStack>
+  );
+};
+
+const CodeBadge = ({ code, tag }: any) => {
+  return (
+    <Badge
+      key={code}
+      colorScheme={colors[tag - 1]}
+      rounded={"md"}
+      fontSize="md"
+      py="1"
+      px="2"
+    >
+      {code}
+    </Badge>
   );
 };
 
@@ -318,7 +275,7 @@ const StatsComponent = ({
         value={percentage}
         color="teal.400"
         thickness="7px"
-        size="125px"
+        size="135px"
         capIsRound
       >
         <CircularProgressLabel>{`${percentage}%`}</CircularProgressLabel>

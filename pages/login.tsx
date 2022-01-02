@@ -9,9 +9,9 @@ import {
 } from "@chakra-ui/react";
 
 import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/router";
 import withAuth from "../context/ProtectedRoutesWrapper";
 import { useEffect } from "react";
-import Router, { useRouter } from "next/router";
 
 export type LoginInfo = {
   email: string;

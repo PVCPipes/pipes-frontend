@@ -56,10 +56,8 @@ This website allows monash users to upload their csv files that are downloaded f
 
 ## Team Members
 
-Min Hao - Project Manager
-Blaise Tiong - Tech Lead
-Wei Chun - Tech
-
-Lead
-Sauce Foong - Tech Lead
+Min Hao - Project Manager <br>
+Blaise Tiong - Tech Lead <br>
+Wei Chun - Tech Lead <br>
+Sauce Foong - Tech Lead <br>
 Ally Teh - UI Lead
