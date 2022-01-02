@@ -2,18 +2,16 @@
 
 This website allows monash users to upload their csv files that are downloaded from Callista to out platform. In which results can be obtained once the processing is done.
 
+<br>
+
+Back End Repo [here](https://github.com/PVCPipes/pipes-backend).
+
 ## User Workflow
 
 1. Staff logs into the platform
 2. Staff uploads the csv file generated from Callista
 3. Results are generated on another page, in which a link is provided for every generation of result
 4. Staff can revisit the results using the link provided
-
-<br>
-
-## Technical Workflow
-
-1. TBC
 
 <br>
 
@@ -26,15 +24,8 @@ This website allows monash users to upload their csv files that are downloaded f
 
 ## Enabling Technologies
 
-### Front End
-
-1. Next.js - Main
-2. Firebase - Auth
-
-### Back End
-
-1. Nest.js -
-2. AWS - Server Hosting + DB Hosting
+1. Next.js - Main Code Base
+2. Firebase - Authentication of Monash Emails
 
 <br>
 
