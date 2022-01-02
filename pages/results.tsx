@@ -19,11 +19,12 @@ import {
   CircularProgressLabel,
   StackDivider,
   Center,
+  Button,
+  Divider,
 } from "@chakra-ui/react";
 import DetailsDrawer from "../components/DetailsDrawer";
-import { CheckCircleIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon, SearchIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
-import LoadingPage from "../components/LoadingComponent";
 
 const Results: NextPage = () => {
   const tryCode = [
@@ -59,12 +60,6 @@ const Results: NextPage = () => {
     }, 3000);
   }, []);
 
-  // const { View: LottieView } = useLottie({
-  //   animationData: loadingAnimation,
-  //   loop: true,
-  //   autoplay: true,
-  // });
-
   const onRowClick = (index: number) => {
     setSelectedDataIndex(index);
     onToggle();
@@ -72,58 +67,73 @@ const Results: NextPage = () => {
 
   return (
     <>
-      <LoadingPage />
-      <Table colorScheme="teal" size="md">
-        <Thead>
-          <Tr>
-            <Th>Student Name</Th>
-            <Th>Student ID</Th>
-            <Th>Course Code</Th>
-            <Th>Credit Points Accumulated</Th>
-            <Th>Graduability</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {loading ? (
-            <TableLoading columnsToLoad={5} rowsToLoad={10} />
-          ) : (
-            <>
-              {tryCode?.map(
-                (
-                  {
-                    studentName,
-                    studentID,
-                    courseCode,
-                    canGraduate,
-                    creditPointsAccumulated,
-                  },
-                  index
-                ) => (
-                  <Tr
-                    userSelect={"none"}
-                    onClick={() => onRowClick(index)}
-                    key={studentID}
-                    _hover={{
-                      cursor: "pointer",
-                      bg: "teal.200",
-                    }}
-                  >
-                    <Td>{studentName}</Td>
-                    <Td>{studentID}</Td>
-                    <Td>{courseCode}</Td>
-                    <Td>{creditPointsAccumulated}</Td>
-                    <Td>
-                      <Badge colorScheme={canGraduate ? "green" : "red"}>
-                        {JSON.stringify(canGraduate)}
-                      </Badge>
-                    </Td>
-                  </Tr>
-                )
+      <Box padding={"20px"}>
+        <HStack justify="space-between">
+          <Heading m={"10px"}>This is the title</Heading>
+          <Button leftIcon={<SearchIcon />} width={"30%"} textAlign={"start"}>
+            <Text textAlign={"start"} width="100%">
+              Search
+            </Text>
+          </Button>
+          <Button colorScheme={"teal"}>Export as Excel</Button>
+        </HStack>
+        <Divider />
+        <Card>
+          <Table colorScheme="teal" size="md">
+            <Thead>
+              <Tr>
+                <Th>Student Name</Th>
+                <Th>Student ID</Th>
+                <Th>Course Code</Th>
+                <Th>Credit Points Accumulated</Th>
+                <Th>Graduability</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {loading ? (
+                <TableLoading columnsToLoad={5} rowsToLoad={10} />
+              ) : (
+                <>
+                  {tryCode?.map(
+                    (
+                      {
+                        studentName,
+                        studentID,
+                        courseCode,
+                        canGraduate,
+                        creditPointsAccumulated,
+                      },
+                      index
+                    ) => (
+                      <Tr
+                        userSelect={"none"}
+                        onClick={() => onRowClick(index)}
+                        key={studentID}
+                        _hover={{
+                          cursor: "pointer",
+                          bg: "teal.200",
+                          rounded: "md",
+                        }}
+                      >
+                        <Td>{studentName}</Td>
+                        <Td>{studentID}</Td>
+                        <Td>{courseCode}</Td>
+                        <Td>{creditPointsAccumulated}</Td>
+                        <Td>
+                          <Badge colorScheme={canGraduate ? "green" : "red"}>
+                            {JSON.stringify(canGraduate)}
+                          </Badge>
+                        </Td>
+                      </Tr>
+                    )
+                  )}
+                </>
               )}
-            </>
-          )}
-        </Tbody>
-      </Table>
+            </Tbody>
+          </Table>
+        </Card>
+      </Box>
+
       <DetailsDrawer onToggle={onToggle} isOpen={isOpen} title="Details">
         <ResultsDetails selectedData={tryCode[selectedDataIndex]} />
       </DetailsDrawer>
