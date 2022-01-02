@@ -39,6 +39,8 @@ const LoadingPage = () => {
       position={"fixed"}
       width={"100vw"}
       height={"100vh"}
+      top={0}
+      left={0}
       bg={imagesLink[selected].bgColor}
       zIndex={2}
     >

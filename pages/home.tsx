@@ -16,12 +16,30 @@ import { AttachmentIcon } from "@chakra-ui/icons";
 import Card from "../components/Card";
 import { useRouter } from "next/router";
 import LoadingPage from "../components/LoadingComponent";
+import Header from "../components/Header";
+
 import xlsx from "xlsx";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "@chakra-ui/react";
 
 const Home: NextPage = () => {
   const [file, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { user, login, logout } = useAuth();
   const router = useRouter();
+  const toast = useToast();
+
+  const userLogout = () => {
+    toast({
+      title: "Logout Successful",
+      description: "You can not play with the pipes now",
+      status: "success",
+      isClosable: true,
+    });
+    logout();
+    router.push("/login");
+  };
 
   function readFileAsync(file: any) {
     return new Promise((resolve, reject) => {
@@ -47,6 +65,7 @@ const Home: NextPage = () => {
 
   const onFileSubmit = async () => {
     setIsLoading(true);
+
     if (file) {
       let payload: any[] = [];
       for (let i = 0; i < file.length; i++) {
@@ -56,108 +75,125 @@ const Home: NextPage = () => {
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const json = xlsx.utils.sheet_to_json(worksheet);
-        console.log(json);
         payload = payload.concat(json);
       }
+      payload = payload.sort(
+        (a: any, b: any) => a["Person ID"] - b["Person ID"]
+      );
+      const res = await axios({
+        url: "http://localhost:3000/api/v1/process",
+        method: "post",
+        data: {
+          data: JSON.stringify(payload),
+        },
+      });
+
+      console.log(res.data);
+
+      setIsLoading(false);
     }
-    setIsLoading(false);
-    router.push("/results");
+
+    //router.push("/results");
   };
 
   return (
-    <Box
-      bgImage={
-        "https://assets.website-files.com/5d5e2ff58f10c53dcffd8683/5d9d126de6b3b43d496aea9d_laying.svg"
-      }
-      backgroundRepeat={"no-repeat"}
-      backgroundSize={"120% 100%"}
-      height={"100vh"}
-      width={"100vw"}
-      p={2}
-    >
-      {isLoading && <LoadingPage />}
-      <Heading width="100%" padding={8}>
-        Waiting for you to start working ....
-      </Heading>
-      <Drawer
-        isOpen={!isLoading}
-        onClose={() => {}}
-        placement="left"
-        size={"sm"}
+    <>
+      <Header />
+      <Box
+        bgImage={
+          "https://assets.website-files.com/5d5e2ff58f10c53dcffd8683/5d9d126de6b3b43d496aea9d_laying.svg"
+        }
+        backgroundRepeat={"no-repeat"}
+        backgroundSize={"120% 100%"}
+        height={"100vh"}
+        width={"100vw"}
+        p={2}
       >
-        <DrawerContent bg={"transparent"} shadow={"none"}>
-          <DrawerBody alignItems={"center"} display={"flex"}>
-            <Card>
-              <VStack
-                width={"100%"}
-                height={"100%"}
-                align={"center"}
-                bg="white"
-              >
-                <Heading size={"md"} fontWeight="bold">
-                  Upload Your Documents
-                </Heading>
-                <Text color="gray.500">in .xlsx</Text>
-                <Button onClick={onFileClick} width={"100%"}>
-                  Pick Files
-                </Button>
-                <Input
-                  onChange={onFileChange}
-                  id="fileInput"
-                  type={"file"}
-                  accept=".xlsx"
-                  multiple
-                  hidden
-                />
+        {isLoading && <LoadingPage />}
+        <Heading width="100%" padding={8}>
+          Waiting for you to start working ....
+        </Heading>
+        <Drawer
+          variant="permanent"
+          isOpen={!isLoading}
+          onClose={() => {}}
+          placement="left"
+          size={"sm"}
+        >
+          <DrawerContent bg={"transparent"} shadow={"none"}>
+            <DrawerBody alignItems={"center"} display={"flex"}>
+              <Card>
                 <VStack
-                  border="1px"
-                  rounded={"md"}
-                  borderColor={"gray.200"}
-                  maxH={"200px"}
                   width={"100%"}
-                  overflowY={"auto"}
-                  padding={"5px"}
+                  height={"100%"}
+                  align={"center"}
+                  bg="white"
                 >
-                  {file.length ? (
-                    file.map((a, index) => (
-                      <Box
-                        key={index}
-                        shadow={"sm"}
-                        padding={"10px"}
-                        width={"100%"}
-                        rounded={"ms"}
-                        border={"1px"}
-                        borderColor={"gray.100"}
-                      >
-                        <HStack overflow={"hidden"}>
+                  <Heading size={"md"} fontWeight="bold">
+                    Upload Your Documents
+                  </Heading>
+                  <Text color="gray.500">in .xlsx</Text>
+                  <Button onClick={onFileClick} width={"100%"}>
+                    Pick Files
+                  </Button>
+                  <Input
+                    onChange={onFileChange}
+                    id="fileInput"
+                    type={"file"}
+                    accept=".xlsx"
+                    multiple
+                    hidden
+                  />
+                  <VStack
+                    border="1px"
+                    rounded={"md"}
+                    borderColor={"gray.200"}
+                    maxH={"200px"}
+                    width={"100%"}
+                    overflowY={"auto"}
+                    padding={"5px"}
+                  >
+                    {file.length ? (
+                      file.map((a, index) => (
+                        <Box
+                          key={index}
+                          shadow={"sm"}
+                          padding={"10px"}
+                          width={"100%"}
+                          rounded={"ms"}
+                          border={"1px"}
+                          borderColor={"gray.100"}
+                        >
+                          <HStack overflow={"hidden"}>
+                            <AttachmentIcon />
+                            <Text>{(a as any)?.name}</Text>
+                          </HStack>
+                        </Box>
+                      ))
+                    ) : (
+                      <Box padding={"10px"}>
+                        <HStack>
                           <AttachmentIcon />
-                          <Text>{(a as any)?.name}</Text>
+                          <Text>Upload Your Files</Text>
                         </HStack>
                       </Box>
-                    ))
-                  ) : (
-                    <Box padding={"10px"}>
-                      <HStack>
-                        <AttachmentIcon />
-                        <Text>Upload Your Files</Text>
-                      </HStack>
-                    </Box>
-                  )}
+                    )}
+                  </VStack>
+                  <Button
+                    disabled={!file.length}
+                    onClick={onFileSubmit}
+                    colorScheme={"teal"}
+                    width={"100%"}
+                  >
+                    Submit File
+                  </Button>
                 </VStack>
-                <Button
-                  disabled={!file.length}
-                  onClick={onFileSubmit}
-                  colorScheme={"teal"}
-                  width={"100%"}
-                >
-                  Submit File
-                </Button>
-              </VStack>
-            </Card>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-    </Box>
+              </Card>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      </Box>
+    </>
   );
 };
 

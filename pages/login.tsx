@@ -1,13 +1,14 @@
 import type { NextPage } from "next";
 import {
   Heading,
-  Link,
-  Box,
-  Text,
   Center,
-  ChakraProvider,
+  Button,
+  VStack,
+  HStack,
+  Image,
 } from "@chakra-ui/react";
-import Card from "../components/Card";
+
+import { useAuth } from "../context/AuthContext";
 
 export type LoginInfo = {
   email: string;
@@ -15,23 +16,22 @@ export type LoginInfo = {
 };
 
 const Login: NextPage = (props) => {
+  const { login } = useAuth();
   return (
-    <div>
-      <ChakraProvider>
-        <Box
-          {...props}
-          width={["100vw", "500px"]}
-          height={["100vh", "700px"]}
-          overflowY={"auto"}
-          bg="yellow"
-          m={"auto"}
-          p={"0.5rem"}
-          position={"relative"}
-        >
-          <Card></Card>
-        </Box>
-      </ChakraProvider>
-    </div>
+    <HStack w="100vw" h="100vh" align="center" justify="space-between">
+      <Image
+        src="https://assets.website-files.com/5d5e2ff58f10c53dcffd8683/5d5e30c8aa3dfeb336a56762_reading.svg"
+        w="50%"
+      />
+      <Center w="50%">
+        <VStack>
+          <Heading p={2}>Pipes Unified Login</Heading>
+          <Button onClick={login} width={"100%"}>
+            Login
+          </Button>
+        </VStack>
+      </Center>
+    </HStack>
   );
 };
 
