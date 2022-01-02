@@ -22,6 +22,7 @@ import axios from "axios";
 import withAuth from "../context/ProtectedRoutesWrapper";
 import { useResults } from "../context/ResultsContext";
 import { useRouter } from "next/router";
+import { addPayload } from "../lib/db";
 
 const Home: NextPage = () => {
   const [file, setFiles] = useState([]);
@@ -69,7 +70,7 @@ const Home: NextPage = () => {
         (a: any, b: any) => a["Person ID"] - b["Person ID"]
       );
       const res = await axios({
-        url: "http://localhost:54253/api/v1/process",
+        url: "http://localhost:3000/api/v1/process",
         method: "post",
         data: {
           data: JSON.stringify(payload),
@@ -77,6 +78,7 @@ const Home: NextPage = () => {
       });
       setResults(res.data);
       console.log(res.data);
+      await addPayload(res.data);
       setIsLoading(false);
     }
     router.push("/results");

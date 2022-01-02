@@ -31,30 +31,60 @@ import { useResults } from "../context/ResultsContext";
 import { useRouter } from "next/router";
 
 import Card from "../components/Card";
+import Logo from "../components/Logo";
 import withAuth from "../context/ProtectedRoutesWrapper";
 import DetailsDrawer from "../components/DetailsDrawer";
+import { getPayload } from "../lib/db";
 
 const Results: NextPage = () => {
-  const { resultLists } = useContext(useResults);
+  const { resultLists, setResults } = useContext(useResults);
   const { onToggle, isOpen } = useDisclosure();
   const router = useRouter();
   const [selectedDataIndex, setSelectedDataIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const tryCode = resultLists.map((obj: any) => ({
-    creditPointsAccumulated: `${obj.creditsTakenByStudents} / ${obj.requiredCreditPoints}`,
-    canGraduate: obj?.canGraduate,
-    studentID: obj?.studentID,
-    courseCode: obj?.course,
-    studentName: obj?.name,
-    ...obj,
-  }));
+  const [tryCode, setCode] = useState(
+    resultLists.map((obj: any) => ({
+      creditPointsAccumulated: `${obj.creditsTakenByStudents} / ${obj.requiredCreditPoints}`,
+      canGraduate: obj?.canGraduate,
+      studentID: obj?.studentID,
+      courseCode: obj?.course,
+      studentName: obj?.name,
+      ...obj,
+    }))
+  );
 
   useEffect(() => {
-    if (resultLists.length === 0) router.push("/home");
+    const { code } = router.query;
+    callFirebase(code as any);
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-  }, [resultLists]);
+  }, [router.query]);
+
+  const callFirebase = async (code: string) => {
+    if (code) {
+      const results = await getPayload(code);
+      setResults(
+        Object.keys(results as any).map((key: string) => (results as any)[key])
+      );
+
+      console.log(
+        Object.keys(results as any).map((key: string) => (results as any)[key])
+      );
+      setCode(
+        Object.keys(results as any)
+          .map((key: string) => (results as any)[key])
+          .map((obj: any) => ({
+            creditPointsAccumulated: `${obj.creditsTakenByStudents} / ${obj.requiredCreditPoints}`,
+            canGraduate: obj?.canGraduate,
+            studentID: obj?.studentID,
+            courseCode: obj?.course,
+            studentName: obj?.name,
+            ...obj,
+          }))
+      );
+    }
+  };
 
   const onRowClick = (index: number) => {
     setSelectedDataIndex(index);
@@ -63,16 +93,15 @@ const Results: NextPage = () => {
 
   return (
     <>
+      <HStack justify="space-between" p="20px" pb="0px">
+        <Logo />
+        <Button leftIcon={<SearchIcon />} width={"30%"} textAlign={"start"}>
+          <Text textAlign={"start"} width="100%">
+            Search
+          </Text>
+        </Button>
+      </HStack>
       <Box padding={"20px"}>
-        <HStack justify="space-between">
-          <Heading m={"10px"}>Pipes</Heading>
-          <Button leftIcon={<SearchIcon />} width={"30%"} textAlign={"start"}>
-            <Text textAlign={"start"} width="100%">
-              Search
-            </Text>
-          </Button>
-        </HStack>
-        <Divider />
         <Card>
           <Table colorScheme="teal" size="md">
             <Thead>
