@@ -5,12 +5,13 @@ This website allows monash users to upload their csv files that are downloaded f
 <br>
 
 Back End Repo [here](https://github.com/PVCPipes/pipes-backend).
+Front End Website Link [here](https://cocky-mcnulty-e456f6.netlify.app/).
 
 ## User Workflow
 
 1. Staff logs into the platform
 2. Staff uploads the csv file generated from Callista
-3. Results are generated on another page, in which a link is provided for every generation of result
+3. Results are then generated for the user
 4. Staff can revisit the results using the link provided
 
 <br>
